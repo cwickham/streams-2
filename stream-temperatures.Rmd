@@ -23,22 +23,22 @@ streams <- read_csv("data/HT00441_v8.csv")
 names(streams) <- tolower(names(streams))
 ```
 
+Filter to time period of interest, and set observations with anything other than "Accepted" quality to missing:
+```{r}
+streams <- streams %>%
+  filter(year(date) > 2000, year(date) < 2020) %>%   
+  mutate(
+    watertemp_mean_day = ifelse(watertemp_mean_flag != "A", 
+      NA, watertemp_mean_day)) %>% 
+  select(sitecode, date, watertemp_mean_day, watertemp_method) 
+```
+
 ## GSLOOK
 
 Get site data:
 ```{r}
 gslook <- streams %>% 
   filter(sitecode == "GSLOOK")
-```
-
-Filter for quality and time period:
-```{r}
-gslook <- gslook %>%
-  filter(year(date) > 2000, year(date) < 2020) %>%   
-  mutate(
-    watertemp_mean_day = ifelse(watertemp_mean_flag != "A", 
-      NA, watertemp_mean_day)) %>% 
-  select(sitecode, date, watertemp_mean_day, watertemp_method) 
 ```
 
 Checks on data quality/coverage:
@@ -68,16 +68,6 @@ gsmack <- streams %>%
   filter(sitecode == "GSMACK")
 ```
 
-Filter for quality and time period:
-```{r}
-gsmack <- gsmack %>%
-  filter(year(date) > 2000, year(date) < 2020) %>%   
-  mutate(
-    watertemp_mean_day = ifelse(watertemp_mean_flag != "A", 
-      NA, watertemp_mean_day)) %>% 
-  select(sitecode, date, watertemp_mean_day, watertemp_method) 
-```
-
 Checks on data quality/coverage:
 ```{r}
 gsmack %>% 
@@ -105,16 +95,6 @@ gsws01 <- streams %>%
   filter(sitecode == "GSWS01")
 ```
 
-Filter for quality and time period:
-```{r}
-gsws01 <- gsws01 %>%
-  filter(year(date) > 2000, year(date) < 2020) %>%   
-  mutate(
-    watertemp_mean_day = ifelse(watertemp_mean_flag != "A", 
-      NA, watertemp_mean_day)) %>% 
-  select(sitecode, date, watertemp_mean_day, watertemp_method) 
-```
-
 Checks on data quality/coverage:
 ```{r}
 gsws01 %>% 
@@ -124,6 +104,7 @@ gsws01 %>%
     n_missing = sum(is.na(watertemp_mean_day))
   )
 ```
+
 Plot site stream temperature over time:
 ```{r}
 gsws01 %>% 
