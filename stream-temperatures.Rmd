@@ -1,0 +1,135 @@
+---
+title: Stream temperatures
+author: Charlotte Wickham
+output: pdf_document
+---
+
+```{r setup, message = FALSE}
+library(tidyverse)
+library(lubridate)
+knitr::opts_chunk$set(fig.height = 3)
+```
+
+Explore stream temperatures for the sites:
+
+* GSWS01 Andrews Lookout Creek Gaging Station	
+* GSMACK Andrews Mack Creek Gaging Station	 
+* GSWS01 Andrews Watershed 1 Gaging Station	  	
+
+## Data Import
+
+```{r, message = FALSE}
+streams <- read_csv("data/HT00441_v8.csv")
+names(streams) <- tolower(names(streams))
+```
+
+## GSLOOK
+
+Get site data:
+```{r}
+gslook <- streams %>% 
+  filter(sitecode == "GSLOOK")
+```
+
+Filter for quality and time period:
+```{r}
+gslook <- gslook %>%
+  filter(year(date) > 2000, year(date) < 2020) %>%   
+  mutate(
+    watertemp_mean_day = ifelse(watertemp_mean_flag != "A", 
+      NA, watertemp_mean_day)) %>% 
+  select(sitecode, date, watertemp_mean_day, watertemp_method) 
+```
+
+Checks on data quality/coverage:
+```{r}
+gslook %>% 
+  summarise(
+    n_obs = n(),
+    n_days = n_distinct(date),
+    n_missing = sum(is.na(watertemp_mean_day))
+  )
+```
+Plot site stream temperature over time:
+```{r}
+gslook %>% 
+  ggplot(aes(date, watertemp_mean_day)) + 
+  geom_line(aes(color = watertemp_method)) +
+  scale_color_brewer("Method", palette = "Set2") +
+  labs(x = "", y = "Water temperature (C)",
+    title = "GSLOOK")
+```
+
+## GSMACK
+
+Get site data:
+```{r}
+gsmack <- streams %>% 
+  filter(sitecode == "GSMACK")
+```
+
+Filter for quality and time period:
+```{r}
+gsmack <- gsmack %>%
+  filter(year(date) > 2000, year(date) < 2020) %>%   
+  mutate(
+    watertemp_mean_day = ifelse(watertemp_mean_flag != "A", 
+      NA, watertemp_mean_day)) %>% 
+  select(sitecode, date, watertemp_mean_day, watertemp_method) 
+```
+
+Checks on data quality/coverage:
+```{r}
+gsmack %>% 
+  summarise(
+    n_obs = n(),
+    n_days = n_distinct(date),
+    n_missing = sum(is.na(watertemp_mean_day))
+  )
+```
+Plot site stream temperature over time:
+```{r}
+gsmack %>% 
+  ggplot(aes(date, watertemp_mean_day)) + 
+  geom_line(aes(color = watertemp_method)) +
+  scale_color_brewer("Method", palette = "Set2") +
+  labs(x = "", y = "Water temperature (C)",
+    title = "GSMACK")
+```
+
+## GSWS01
+
+Get site data:
+```{r}
+gsws01 <- streams %>% 
+  filter(sitecode == "GSWS01")
+```
+
+Filter for quality and time period:
+```{r}
+gsws01 <- gsws01 %>%
+  filter(year(date) > 2000, year(date) < 2020) %>%   
+  mutate(
+    watertemp_mean_day = ifelse(watertemp_mean_flag != "A", 
+      NA, watertemp_mean_day)) %>% 
+  select(sitecode, date, watertemp_mean_day, watertemp_method) 
+```
+
+Checks on data quality/coverage:
+```{r}
+gsws01 %>% 
+  summarise(
+    n_obs = n(),
+    n_days = n_distinct(date),
+    n_missing = sum(is.na(watertemp_mean_day))
+  )
+```
+Plot site stream temperature over time:
+```{r}
+gsws01 %>% 
+  ggplot(aes(date, watertemp_mean_day)) + 
+  geom_line(aes(color = watertemp_method)) +
+  scale_color_brewer("Method", palette = "Set2") +
+  labs(x = "", y = "Water temperature (C)",
+    title = "GSWS01")
+```
